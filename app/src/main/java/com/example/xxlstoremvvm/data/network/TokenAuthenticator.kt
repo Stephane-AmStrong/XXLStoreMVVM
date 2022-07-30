@@ -1,11 +1,13 @@
 package com.example.xxlstoremvvm.data.network
 
 import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import com.example.xxlstoremvvm.data.UserPreferences
+import com.example.xxlstoremvvm.data.models.AccountDto
 import com.example.xxlstoremvvm.data.repository.BaseRepository
-import com.example.xxlstoremvvm.data.responses.TokenResponse
 import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
@@ -20,16 +22,16 @@ class TokenAuthenticator @Inject constructor(
     private val appContext = context.applicationContext
     private val userPreferences = UserPreferences(appContext)
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun authenticate(route: Route?, response: Response): Request? {
         return runBlocking {
             when (val tokenResponse = getUpdatedToken()) {
                 is Resource.Success -> {
                     userPreferences.saveAccessTokens(
-                        tokenResponse.value.access_token!!,
-                        tokenResponse.value.refresh_token!!
+                        tokenResponse.value
                     )
                     response.request.newBuilder()
-                        .header("Authorization", "Bearer ${tokenResponse.value.access_token}")
+                        .header("Authorization", "Bearer ${tokenResponse.value}")
                         .build()
                 }
                 else -> null
@@ -37,9 +39,12 @@ class TokenAuthenticator @Inject constructor(
         }
     }
 
-    private suspend fun getUpdatedToken(): Resource<TokenResponse> {
-        val refreshToken = userPreferences.refreshToken.first()
-        return safeApiCall { tokenApi.refreshAccessToken(refreshToken) }
+    @RequiresApi(Build.VERSION_CODES.O)
+    private suspend fun getUpdatedToken(): Resource<AccountDto.AuthenticationResponse> {
+        val authenticationResponse = userPreferences.authenticationResponse.first()
+        return safeApiCall {
+            tokenApi.refreshAccessToken(accessToken = authenticationResponse.accessToken, refreshToken = authenticationResponse.refreshToken.value)
+        }
     }
 
 }

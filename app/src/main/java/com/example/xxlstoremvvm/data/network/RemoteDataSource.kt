@@ -31,7 +31,7 @@ class RemoteDataSource @Inject constructor() {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(getRetrofitClient(authenticator))
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
             .create(api)
     }

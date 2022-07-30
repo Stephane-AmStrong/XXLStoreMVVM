@@ -7,6 +7,8 @@ class UserRepository @Inject constructor(
     private val api: UserApi
 ) : BaseRepository(api) {
 
-    suspend fun getUser() = safeApiCall { api.getUser() }
+    suspend fun getUser() = safeApiCall {
+        api.getUser()
+    }
 
 }

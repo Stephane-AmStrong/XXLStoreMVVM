@@ -6,10 +6,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import com.example.xxlstoremvvm.data.UserPreferences
 import com.example.xxlstoremvvm.data.network.*
-import com.example.xxlstoremvvm.data.repository.AuthRepository
-import com.example.xxlstoremvvm.data.repository.UserRepository
 import javax.inject.Singleton
 
 @Module
@@ -21,8 +18,8 @@ object AppModule {
     fun provideAuthApi(
         remoteDataSource: RemoteDataSource,
         @ApplicationContext context: Context
-    ): AuthApi {
-        return remoteDataSource.buildApi(AuthApi::class.java, context)
+    ): AuthenticationApi {
+        return remoteDataSource.buildApi(AuthenticationApi::class.java, context)
     }
 
     @Singleton

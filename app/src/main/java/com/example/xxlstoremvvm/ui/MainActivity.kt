@@ -1,14 +1,15 @@
-package com.example.xxlstoremvvm
+package com.example.xxlstoremvvm.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.asLiveData
+import com.example.xxlstoremvvm.R
 import dagger.hilt.android.AndroidEntryPoint
 import com.example.xxlstoremvvm.data.UserPreferences
 import com.example.xxlstoremvvm.ui.auth.AuthActivity
 import com.example.xxlstoremvvm.ui.home.HomeActivity
-import com.example.xxlstoremvvm.ui.startNewActivity
+import com.example.xxlstoremvvm.utils.startNewActivity
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {

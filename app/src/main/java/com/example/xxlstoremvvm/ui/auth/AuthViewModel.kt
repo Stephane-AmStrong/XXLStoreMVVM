@@ -3,32 +3,34 @@ package com.example.xxlstoremvvm.ui.auth
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.xxlstoremvvm.data.models.AccountDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import com.example.xxlstoremvvm.data.network.Resource
 import com.example.xxlstoremvvm.data.repository.AuthRepository
-import com.example.xxlstoremvvm.data.responses.LoginResponse
 import com.example.xxlstoremvvm.ui.base.BaseViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class AuthViewModel @Inject constructor(
+class AuthViewModel
+@Inject
+constructor(
     private val repository: AuthRepository
 ) : BaseViewModel(repository) {
 
-    private val _loginResponse: MutableLiveData<Resource<LoginResponse>> = MutableLiveData()
-    val loginResponse: LiveData<Resource<LoginResponse>>
-        get() = _loginResponse
+    private val _authenticationResponse: MutableLiveData<Resource<AccountDto.AuthenticationResponse>> = MutableLiveData()
+    val authenticationResponse: LiveData<Resource<AccountDto.AuthenticationResponse>>
+        get() = _authenticationResponse
 
-    fun login(
+    fun authentication(
         email: String,
         password: String
     ) = viewModelScope.launch {
-        _loginResponse.value = Resource.Loading
-        _loginResponse.value = repository.login(email, password)
+        _authenticationResponse.value = Resource.Loading
+        _authenticationResponse.value = repository.authenticate(email, password)
     }
 
-    suspend fun saveAccessTokens(accessToken: String, refreshToken: String) {
-        repository.saveAccessTokens(accessToken, refreshToken)
+    suspend fun saveAccessTokens(authenticationResponse: AccountDto.AuthenticationResponse) {
+        repository.saveAccessTokens(authenticationResponse)
     }
 }

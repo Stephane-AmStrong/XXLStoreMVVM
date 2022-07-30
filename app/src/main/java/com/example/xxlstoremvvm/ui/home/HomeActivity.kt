@@ -8,9 +8,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import com.example.xxlstoremvvm.R
 import com.example.xxlstoremvvm.data.UserPreferences
-import com.example.xxlstoremvvm.data.network.AuthApi
 import com.example.xxlstoremvvm.ui.auth.AuthActivity
-import com.example.xxlstoremvvm.ui.startNewActivity
+import com.example.xxlstoremvvm.utils.startNewActivity
 import javax.inject.Inject
 
 @AndroidEntryPoint

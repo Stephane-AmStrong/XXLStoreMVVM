@@ -7,12 +7,12 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import dagger.hilt.android.AndroidEntryPoint
 import com.example.xxlstoremvvm.R
+import com.example.xxlstoremvvm.data.models.AccountDto
 import com.example.xxlstoremvvm.data.network.Resource
-import com.example.xxlstoremvvm.data.responses.User
 import com.example.xxlstoremvvm.databinding.FragmentHomeBinding
-import com.example.xxlstoremvvm.ui.handleApiError
-import com.example.xxlstoremvvm.ui.logout
-import com.example.xxlstoremvvm.ui.visible
+import com.example.xxlstoremvvm.utils.handleApiError
+import com.example.xxlstoremvvm.utils.logout
+import com.example.xxlstoremvvm.utils.visible
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(R.layout.fragment_home) {
@@ -31,7 +31,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             when (it) {
                 is Resource.Success -> {
                     binding.progressbar.visible(false)
-                    updateUI(it.value.user)
+                    updateUI(it.value)
                 }
                 is Resource.Loading -> {
                     binding.progressbar.visible(true)
@@ -47,9 +47,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
     }
 
-    private fun updateUI(user: User) {
+    private fun updateUI(user: AccountDto.UserInfoResponse) {
         with(binding) {
-            textViewId.text = user.id.toString()
             textViewName.text = user.name
             textViewEmail.text = user.email
         }
