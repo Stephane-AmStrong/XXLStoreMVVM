@@ -1,42 +1,57 @@
 package com.example.xxlstoremvvm.ui.home
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
+import dagger.hilt.android.AndroidEntryPoint
+import com.example.xxlstoremvvm.R
+import com.example.xxlstoremvvm.data.network.Resource
+import com.example.xxlstoremvvm.data.responses.User
 import com.example.xxlstoremvvm.databinding.FragmentHomeBinding
+import com.example.xxlstoremvvm.ui.handleApiError
+import com.example.xxlstoremvvm.ui.logout
+import com.example.xxlstoremvvm.ui.visible
 
-class HomeFragment : Fragment() {
+@AndroidEntryPoint
+class HomeFragment : Fragment(R.layout.fragment_home) {
 
-    private var _binding: FragmentHomeBinding? = null
+    private lateinit var binding: FragmentHomeBinding
+    private val viewModel by viewModels<HomeViewModel>()
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding = FragmentHomeBinding.bind(view)
+        binding.progressbar.visible(false)
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
+        viewModel.getUser()
 
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+        viewModel.user.observe(viewLifecycleOwner, Observer {
+            when (it) {
+                is Resource.Success -> {
+                    binding.progressbar.visible(false)
+                    updateUI(it.value.user)
+                }
+                is Resource.Loading -> {
+                    binding.progressbar.visible(true)
+                }
+                is Resource.Failure -> {
+                    handleApiError(it)
+                }
+            }
+        })
 
-        val textView: TextView = binding.textHome
-        homeViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
+        binding.buttonLogout.setOnClickListener {
+            logout()
         }
-        return root
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    private fun updateUI(user: User) {
+        with(binding) {
+            textViewId.text = user.id.toString()
+            textViewName.text = user.name
+            textViewEmail.text = user.email
+        }
     }
 }
